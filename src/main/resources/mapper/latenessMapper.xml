@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.emp.employ.lateness.LatenessMapper">
+    <select id="selectLatenessListByEmployee_id" parameterType="String" resultType="com.emp.employ.lateness.LatenessDTO">
+        SELECT
+            employee_id,
+            ness_date,
+            type,
+            content,
+            status
+        FROM lateness
+        WHERE employee_id = #{employee_id}
+    </select>
+    <insert id="insertLateness" parameterType="com.emp.employ.lateness.LatenessDTO">
+        INSERT INTO lateness (
+            employee_id,
+            ness_date,
+            type,
+            content,
+            status
+        ) VALUES (
+            #{employee_id},
+            #{ness_date},
+            #{type},
+            #{content},
+            #{status}
+        )
+    </insert>
+
+
+
+
+
+
+</mapper>

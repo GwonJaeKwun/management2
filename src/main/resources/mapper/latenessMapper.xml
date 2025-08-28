@@ -5,7 +5,7 @@
     <select id="selectLatenessListByEmployee_id" parameterType="String" resultType="com.emp.employ.lateness.LatenessDTO">
         SELECT
             employee_id,
-            ness_date,
+            TO_CHAR(ness_date, 'YYYY-MM-DD') AS ness_date,
             type,
             content,
             status

@@ -35,9 +35,8 @@
                     <td>${lateness.ness_date}</td>
                     <td>
                         <c:choose>
-                            <c:when test="${lateness.type == 0}">지각</c:when>
-                            <c:when test="${lateness.type == 1}">결근</c:when>
-                            <c:otherwise>조퇴</c:otherwise>
+                            <c:when test="${lateness.type == 3}">조퇴</c:when>
+                            <c:when test="${lateness.type == 4}">결근</c:when>
                         </c:choose>
                     </td>
                     <td>${lateness.content}</td>

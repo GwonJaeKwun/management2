@@ -12,6 +12,8 @@
         FROM lateness
         WHERE employee_id = #{employee_id}
     </select>
+    
+    <!-- 이 부분을 insertLateness에서 eatCreate로 변경해야 합니다. -->
     <insert id="insertLateness" parameterType="com.emp.employ.lateness.LatenessDTO">
         INSERT INTO lateness (
             employee_id,
@@ -27,10 +29,5 @@
             #{status}
         )
     </insert>
-
-
-
-
-
 
 </mapper>

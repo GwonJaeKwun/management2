@@ -4,42 +4,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<style>
-</style> 
+    <title>지.결.조. 기록 및 조회</title>
 </head>
 <body>
-   <main>
-    <h2>지각&조퇴&결근 신청</h2>
+    <h1>지.결.조. 기록 및 조회</h1>
+    <p>환영합니다, ${employeeDTO.name}님!</p>
+
+    <!-- 신청하기 버튼 추가 -->
+    <a href="/lateness/createForm">
+        <button>신청하기</button>
+    </a>
+
+    <hr>
+
+    <h2>기존 기록 목록</h2>
     <table>
-    <tr>
-        <td>날짜</td>
-	    <td>형태</td>
-	    <td>사유</td>
-	    <td>승인상태</td>
-	    <td>수정</td>
-	    <td>삭제</td>
-    </tr><br>
-    
-    <tr>
-    <td colspan="6">
-    <a href ="/lateness/createForm">신청하기</a><br>
-    </td>
-    </tr>
-    
-    <!--  TODO c:forEach -->
-   <c:forEach var="lateness" items="${latenessList}">
-    <tr>
-      <td>${ latenessDTO.ness_date }</td>
-      <td>${ latenessDTO.type }</td>
-      <td>${ latenessDTO.content }</td>
-      <td>${ latenessDTO.status == 0 ? '미승인' : '승인' }</td>
-      <td></td>
-      <td></td>
-    </tr>
-   </c:forEach>
+        <thead>
+            <tr>
+                <th>사번</th>
+                <th>날짜</th>
+                <th>유형</th>
+                <th>내용</th>
+                <th>상태</th>
+            </tr>
+        </thead>
+        <tbody>
+            <c:forEach var="lateness" items="${LatenessDTOList}">
+                <tr>
+                    <td>${lateness.employee_id}</td>
+                    <td>${lateness.ness_date}</td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${lateness.type == 0}">지각</c:when>
+                            <c:when test="${lateness.type == 1}">결근</c:when>
+                            <c:otherwise>조퇴</c:otherwise>
+                        </c:choose>
+                    </td>
+                    <td>${lateness.content}</td>
+                    <td>${lateness.status == 0 ? '미승인' : '승인'}</td>
+                </tr>
+            </c:forEach>
+        </tbody>
     </table>
-   </main>
+
 </body>
 </html>

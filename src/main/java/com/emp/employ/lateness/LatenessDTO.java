@@ -4,6 +4,7 @@ public class LatenessDTO {
 
     private String employee_id;
     private String ness_date;
+    private String created_date;
     private int type;
     private String content;
     private int status;
@@ -66,4 +67,12 @@ public class LatenessDTO {
 	public void setStatus(int status) {
         this.status = status;
     }
+
+	public String getCreated_date() {
+		return created_date;
+	}
+
+	public void setCreated_date(String created_date) {
+		this.created_date = created_date;
+	}
 }

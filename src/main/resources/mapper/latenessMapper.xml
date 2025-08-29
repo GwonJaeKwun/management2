@@ -6,11 +6,13 @@
         SELECT
             employee_id,
             TO_CHAR(ness_date, 'YYYY-MM-DD') AS ness_date,
+            TO_CHAR(created_date, 'YYYY-MM-DD') AS created_date,
             type,
             content,
             status
         FROM lateness
-        WHERE employee_id = #{employee_id}
+        WHERE employee_id = #{employee_id} 
+        ORDER BY ness_date DESC
     </select>
     
     <!-- 이 부분을 insertLateness에서 eatCreate로 변경해야 합니다. -->
@@ -18,16 +20,46 @@
         INSERT INTO lateness (
             employee_id,
             ness_date,
+            created_date,
             type,
             content,
             status
         ) VALUES (
             #{employee_id},
             #{ness_date},
+            SYSDATE,
             #{type},
             #{content},
             #{status}
         )
     </insert>
+    
+    <!-- 수정 전 정보를 위한 select -->
+    <select id="selectLatenessByEmployee_idAndNess_date" resultType="com.emp.employ.lateness.LatenessDTO">
+        SELECT
+            employee_id,
+            TO_CHAR(ness_date, 'YYYY-MM-DD') AS ness_date,
+            TO_CHAR(created_date, 'YYYY-MM-DD') AS created_date,
+            type,
+            content,
+            status
+        FROM lateness
+        WHERE employee_id = #{employee_id} AND TO_CHAR(ness_date, 'YYYY-MM-DD') = #{ness_date}
+    </select>
+    
+    <!-- 수정 -->
+        <update id="updateLateness" parameterType="com.emp.employ.lateness.LatenessDTO">
+        UPDATE lateness
+        SET
+            content = #{content},
+            status = #{status}
+        WHERE
+            employee_id = #{employee_id} AND ness_date = #{ness_date}
+       </update>
+    
+    <delete id="deleteLateness" parameterType="com.emp.employ.lateness.LatenessDTO">
+    DELETE FROM lateness
+    WHERE employee_id = #{employee_id} AND ness_date = #{ness_date}
+    </delete>
 
 </mapper>

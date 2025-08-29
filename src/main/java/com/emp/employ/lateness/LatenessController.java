@@ -28,7 +28,7 @@ public class LatenessController {
 	private LatenessMapper latenessMapper;
 	/*
 	 * 권재균
-	 * 지.결.조 신청서 View
+	 * 결.조 신청서 View
 	 * 메서드 이름 : eatView
 	 */
 	   @GetMapping("/eatView")
@@ -44,7 +44,6 @@ public class LatenessController {
 	        return mav;
 	    }
 	    
-	    // 신청서 작성 폼을 보여주는 페이지
 	    @GetMapping("/createForm")
 	    public ModelAndView createForm(HttpSession session) {
 	        ModelAndView mav = new ModelAndView();
@@ -55,7 +54,6 @@ public class LatenessController {
 	        return mav;
 	    }
 
-	    // 신청서 제출(POST)을 처리하고 목록 페이지로 리다이렉션
 	    @PostMapping("/eatCreate")
 	    public String eatCreate(LatenessDTO latenessDTO, HttpSession session) {
 	        EmployeeDTO employee = (EmployeeDTO) session.getAttribute("employee");
@@ -63,17 +61,15 @@ public class LatenessController {
 	        latenessDTO.setEmployee_id(employee.getEmployee_id());
 	        latenessDTO.setStatus(0); 
 
-	        try {
-	            latenessMapper.insertLateness(latenessDTO);
-	            return "redirect:/eatView"; 
-	        } catch (Exception e) {
-	            System.err.println("데이터 삽입 중 오류 발생: " + e.getMessage());
-	            return "redirect:/createForm"; 
-	        }	
+	        
+            latenessMapper.insertLateness(latenessDTO);
+            return "redirect:/lateness/eatView"; 
+	        
+	           
 	    }
 	/*
 	 * 권재균
-	 * 지.결.조 신청 내역 조회
+	 * 결.조 신청 내역 조회
 	 * 메서드 이름 : eatRead
 	 */
 	public ModelAndView eatRead() {
@@ -83,17 +79,7 @@ public class LatenessController {
 	}
 	
 	
-	/*
-	 * 권재균
-	 * 지.결.조 신청 내역 수정
-	 * 메서드 이름 : eatUpdate
-	 */
-	public ModelAndView eatUpdate() {
-		ModelAndView mav = new ModelAndView();
-		
-		return mav;
-	}
-	
+
 	
 	/*
 	 * 권재균
@@ -105,23 +91,62 @@ public class LatenessController {
 		
 		return mav;
 	}
-    @RequestMapping("/delete")
-    public ModelAndView delete(LatenessDTO latenessDTO) {
-        latenessMapper.deleteLateness(latenessDTO);
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("redirect:/lateness/eatView");
-        return mav;
-    }
+	@RequestMapping("/delete")
+	public String delete(LatenessDTO latenessDTO) {
+	    latenessMapper.deleteLateness(latenessDTO); 
+	    return "redirect:/lateness/eatView"; 
+	}
 	/*
 	 * 권재균
-	 * 자신의 지.결.조 신청내역 수정 View
-	 * 메서드 이름 : eatUpdateView
+	 * 결.조 신청 내역 수정
+	 * 메서드 이름 : eatUpdate
 	 */
-	@GetMapping("/eatUpdateView")
-	public ModelAndView eatUpdateView() {
+	public ModelAndView eatUpdate() {
 		ModelAndView mav = new ModelAndView();
 		
 		return mav;
 	}
+	
+	/*
+	 * 권재균
+	 * 자신의 결.조 신청내역 수정 View
+	 * 메서드 이름 : eatUpdateView
+	 */
+    @GetMapping("/updateForm")
+    public ModelAndView updateForm(HttpSession session) {
+        ModelAndView mav = new ModelAndView();
+        EmployeeDTO employee = (EmployeeDTO) session.getAttribute("employee");
+        
+        mav.addObject("employeeDTO", employee);
+        mav.setViewName("lateness/createForm");
+        return mav;
+    }
+    @PostMapping("/eatUpdate")
+    public String eatUpdate(LatenessDTO latenessDTO) {
+        latenessMapper.updateLateness(latenessDTO);
+        return "redirect:/lateness/eatView";
+    }
+
+    // 자신의 결.조 신청내역 수정 View (기존 데이터를 불러와 보여주는 페이지)
+    @GetMapping("/eatUpdateView")
+    public ModelAndView eatUpdateView(
+        @RequestParam("employee_id") String employee_id,
+        @RequestParam("ness_date") String ness_date,
+        HttpSession session
+    ) {
+        ModelAndView mav = new ModelAndView();
+
+        LatenessDTO latenessDTO = latenessMapper.selectLatenessByEmployee_idAndNess_date(employee_id, ness_date);
+
+        mav.addObject("latenessDTO", latenessDTO);
+
+        EmployeeDTO employee = (EmployeeDTO) session.getAttribute("employee");
+        mav.addObject("employeeDTO", employee);
+
+        // 수정 페이지를 띄워주는 역할이므로 viewName은 updateForm으로 설정
+        mav.setViewName("lateness/updateForm");
+
+        return mav;
+    }
 	
 }

@@ -31,18 +31,30 @@ public class LatenessController {
 	 * 결.조 신청서 View
 	 * 메서드 이름 : eatView
 	 */
-	   @GetMapping("/eatView")
-	    public ModelAndView eatView(HttpSession session) {
-	        ModelAndView mav = new ModelAndView();
-	        EmployeeDTO employee = (EmployeeDTO) session.getAttribute("employee");
-	        
-	        List<LatenessDTO> latenessList = latenessMapper.selectLatenessListByEmployee_id(employee.getEmployee_id());
-	        
-	        mav.addObject("employeeDTO", employee);
-	        mav.addObject("LatenessDTOList", latenessList);
-	        mav.setViewName("lateness/eatView");
-	        return mav;
+	@GetMapping("/eatView")
+	public ModelAndView eatView(
+	    HttpSession session,
+	    @RequestParam(value = "status", required = false) Integer status,
+	    @RequestParam(value = "atte_flag", required = false) Integer atte_flag
+	) {
+	    ModelAndView mav = new ModelAndView();
+	    EmployeeDTO employee = (EmployeeDTO) session.getAttribute("employee");
+
+	    List<LatenessDTO> latenessList;
+
+	    if (status != null || atte_flag != null) {
+	        latenessList = latenessMapper.selectLatenessListByEmployee_idAndStatusAndAtte_flag
+	        		(employee.getEmployee_id(), status, atte_flag);
+	    } else {
+	        latenessList = latenessMapper.selectLatenessListByEmployee_id
+	        		(employee.getEmployee_id());
 	    }
+
+	    mav.addObject("employeeDTO", employee);
+	    mav.addObject("LatenessDTOList", latenessList);
+	    mav.setViewName("lateness/eatView");
+	    return mav;
+	}
 	    
 	    @GetMapping("/createForm")
 	    public ModelAndView createForm(HttpSession session) {
@@ -122,8 +134,19 @@ public class LatenessController {
         return mav;
     }
     @PostMapping("/eatUpdate")
-    public String eatUpdate(LatenessDTO latenessDTO) {
-        latenessMapper.updateLateness(latenessDTO);
+    public String eatUpdate(@RequestParam("original_ness_date") String originalNessDate, LatenessDTO latenessDTO) {
+        latenessMapper.updateLateness(latenessDTO, originalNessDate);
+        return "redirect:/lateness/eatView";
+    }
+    @PostMapping("/eatUpdateNew")
+    public String eatUpdateNew(
+        @RequestParam("ness_date") String nessDate,
+        @RequestParam("content") String content,
+        @RequestParam("atte_flag") int atteFlag,
+        @RequestParam("employee_id") String employeeId,
+        @RequestParam("original_ness_date") String originalNessDate
+    ) {
+        latenessMapper.updateLatenessNew(nessDate, content, atteFlag, employeeId, originalNessDate);
         return "redirect:/lateness/eatView";
     }
 
@@ -147,6 +170,45 @@ public class LatenessController {
         mav.setViewName("lateness/updateForm");
 
         return mav;
+    }
+    
+    // 관리자 페이지
+    @GetMapping("/managerEatView")
+    public ModelAndView managerEatView(
+    	@RequestParam(value = "search_text", required = false) String searchText,
+        @RequestParam(value = "status", required = false) Integer status,
+        @RequestParam(value = "atte_flag", required = false) Integer atteFlag
+    ) {
+        ModelAndView mv = new ModelAndView();
+        List<LatenessDTO> latenessList;
+
+        if (searchText != null && !searchText.isEmpty() || status != null || atteFlag != null) {
+            latenessList = latenessMapper.selectLatenessListByManager(searchText, status, atteFlag);
+        } else {
+            latenessList = latenessMapper.selectLatenessListAll();
+        }
+
+        mv.addObject("LatenessDTOList", latenessList);
+        
+        mv.setViewName("lateness/managerEatView");
+
+        return mv;
+    }
+    
+    @GetMapping("/eatDeny")
+    public String denyLateness(@RequestParam("employee_id") String employee_id, @RequestParam("ness_date") String ness_date) {
+
+        latenessMapper.updateLatenessStatus(employee_id, ness_date, 0); 
+        
+        return "redirect:/lateness/managerEatView";
+    }
+
+    @GetMapping("/eatApprove")
+    public String approveLateness(@RequestParam("employee_id") String employee_id, @RequestParam("ness_date") String ness_date) {
+
+        latenessMapper.updateLatenessStatus(employee_id, ness_date, 1);
+        
+        return "redirect:/lateness/managerEatView";
     }
 	
 }

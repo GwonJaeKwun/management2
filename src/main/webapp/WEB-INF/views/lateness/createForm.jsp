@@ -12,7 +12,7 @@
     <form action="/lateness/eatCreate" method="post">
         날짜: <input type="date" name="ness_date" required><br>
         유형:
-        <select name="type">
+        <select name="atte_flag">
             <option value="" disabled selected>선택하시오</option>	
             <option value="3">조퇴</option>
             <option value="4">결근</option>

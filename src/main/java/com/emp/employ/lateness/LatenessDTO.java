@@ -5,7 +5,7 @@ public class LatenessDTO {
     private String employee_id;
     private String ness_date;
     private String created_date;
-    private int type;
+    private int atte_flag;
     private String content;
     private int status;
 	/*
@@ -18,6 +18,29 @@ public class LatenessDTO {
 	status      : 승인/미승인 상태 플래그
 	            : 0 = 미승인 , 1 = 승인
 	 */
+    
+    /* 이동할수도 있는 내용들 */
+    private String name;
+    private String department;
+    
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+    // 이동하지 않는 항목	
+    
     // Getter and Setter for employee_id
     public String getEmployee_id() {
         return employee_id;
@@ -28,46 +51,43 @@ public class LatenessDTO {
     }
 
     // Getter and Setter for ness_date
-   
-
-
-    // Getter and Setter for content
-    public String getContent() {
-        return content;
-    }
-
     public String getNess_date() {
 		return ness_date;
 	}
 
 	public void setNess_date(String ness_date) {
 		this.ness_date = ness_date;
-	}
+	} 
+
+    // Getter and Setter for content
+    public String getContent() {
+        return content;
+    }
+
 
 	public void setContent(String content) {
         this.content = content;
     }
-
-    // Getter and Setter for reason
-    
 
     // Getter and Setter for status
     public int getStatus() {
         return status;
     }
 
-    public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
-
-	public void setStatus(int status) {
-        this.status = status;
+    public void setStatus(int status) {
+    	this.status = status;
     }
+    
+    // Getter and Setter for Atte_flag
+    public int getAtte_flag() {
+		return atte_flag;
+	}
 
+	public void setAtte_flag(int atte_flag) {
+		this.atte_flag = atte_flag;
+	}
+
+    // Getter and Setter for created_date
 	public String getCreated_date() {
 		return created_date;
 	}
@@ -75,4 +95,6 @@ public class LatenessDTO {
 	public void setCreated_date(String created_date) {
 		this.created_date = created_date;
 	}
+
+
 }

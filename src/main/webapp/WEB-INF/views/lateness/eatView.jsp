@@ -9,6 +9,21 @@
 <body>
     <h1>결근&조퇴 기록 및 조회</h1>
     <p>${employeeDTO.department_name } ${employeeDTO.name}님!</p>
+    
+    <!--  검색창 -->
+        <form action="/lateness/eatView" method="get">
+        <select name="status">
+            <option value="">상태 전체</option>
+            <option value="0">미승인</option>
+            <option value="1">승인</option>
+        </select>
+        <select name="atte_flag">
+            <option value="">유형 전체</option>
+            <option value="3">조퇴</option>
+            <option value="4">결근</option>
+        </select>
+        <button type="submit">검색</button>
+    </form>
 
     <!-- 신청하기 버튼 추가 -->
     <a href="/lateness/createForm">
@@ -21,12 +36,11 @@
     <table>
         <thead>
             <tr>
-                <th>등록날짜</th>
-                <th>적용날짜</th>
+                <th>작성날짜</th>
+                <th>신청날짜</th>
                 <th>유형</th>
                 <th>내용</th>
-                <th>상태</th>
-                <th>수정</th>
+                <th>상태</th> <th>수정</th>
                 <th>삭제</th>
             </tr>
         </thead>
@@ -37,17 +51,27 @@
                     <td>${lateness.ness_date}</td>
                     <td>
                         <c:choose>
-                            <c:when test="${lateness.type == 3}">조퇴</c:when>
-                            <c:when test="${lateness.type == 4}">결근</c:when>
+                            <c:when test="${lateness.atte_flag == 3}">조퇴</c:when>
+                            <c:when test="${lateness.atte_flag == 4}">결근</c:when>
                         </c:choose>
                     </td>
                     <td>${lateness.content}</td>
-                    <td>${lateness.status == 0 ? '미승인' : '승인'}</td>
-					<td>
-					    <a href="/lateness/eatUpdateView?employee_id=${lateness.employee_id}&ness_date=${lateness.ness_date}">수정</a>
-					</td>
                     <td>
-                     <a href="/lateness/delete?employee_id=${lateness.employee_id}&ness_date=${lateness.ness_date}">삭제</a>
+                        <c:choose>
+                            <c:when test="${lateness.status == 0}">미승인</c:when>
+                            <c:when test="${lateness.status == 1}">승인</c:when>
+                            <c:otherwise>대기</c:otherwise>
+                        </c:choose>
+                    </td>
+                    <td>
+                        <c:if test="${lateness.status == 0}">
+                            <a href="/lateness/eatUpdateView?employee_id=${lateness.employee_id}&ness_date=${lateness.ness_date}">수정</a>
+                        </c:if>
+                    </td>
+                    <td>
+                        <c:if test="${lateness.status == 0}">
+                            <a href="/lateness/eatDelete?employee_id=${lateness.employee_id}&ness_date=${lateness.ness_date}">삭제</a>
+                        </c:if>
                     </td>
                 </tr>
             </c:forEach>

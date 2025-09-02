@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.emp.employ.atted.AttedDTO;
+import com.emp.employ.atted.AttedMapper;
+import com.emp.employ.leave.LeaveMapper;
+
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -15,6 +19,12 @@ public class EmployeeController {
 
 	@Autowired
 	private EmployeeMapper empMapper;
+	
+	@Autowired
+	private LeaveMapper leaveMapper;
+	
+	@Autowired
+	private AttedMapper attedMapper;
 	
 	/* 직원 메인 페이지 */
 	@GetMapping("/empView")
@@ -28,6 +38,48 @@ public class EmployeeController {
 			return mav;
 		}
 		
+		/* 출석 중복 여부 확인 */
+		if(target.isStartContains()) {
+			mav.addObject("startContains", target.getName());
+			target.setStartContains(false);
+		}
+		
+		/* 퇴근 중복 여부 확인 */
+		if(target.isEndContains()) {
+			mav.addObject("endContains", target.getName());
+			target.setEndContains(false);
+		}
+		
+		/* 퇴근체크 전 출석체크 여부 확인 */
+		if(target.isStartNot()) {
+			mav.addObject("startNot", true);
+			target.setStartNot(false);
+		}
+		
+		/* 퇴근 체크 알림 */
+		if(target.getEndSuccess() != null) {
+			mav.addObject("endSuccess", target.getEndSuccess());
+			target.setEndSuccess(null);
+		}
+		
+		/* 출석 체크 알림 */
+		if(target.getAttedStartSuccess() != null) {
+			mav.addObject("attedStartSuccess", target.getAttedStartSuccess());
+			target.setAttedStartSuccess(null);
+		}
+		
+		/* 연차 계산 */
+		double leave = leaveMapper.leaveRead(target);
+		
+		/* 출근한 시간 계산 */
+		String work_start = attedMapper.attedNowStart(target);
+		
+		/* 올해 근무한 일수 계산 */
+		int allWork = attedMapper.allWorkCount(target);
+		
+		mav.addObject("allWork", allWork);
+		mav.addObject("work_start", work_start);
+		mav.addObject("leave", leave);
 		mav.addObject("employee", target);
 		mav.setViewName("emp/empDash");
 		return mav;
@@ -60,4 +112,7 @@ public class EmployeeController {
 		mav.setViewName("redirect:/emp/empView");
 		return mav;
 	}
+	
+	
+	
 }

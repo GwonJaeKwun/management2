@@ -15,10 +15,10 @@
 <%@ include file="empHeader.jsp" %>
 
 <!-- 본문 영역 -->
-<main class="emp_dashboard">
+<main>
 	<!-- 출석 체크 완료되었음을 표시 -->
 	<c:if test="${not empty attedStartSuccess}">
-		<input type="hidden" id="attedStartSuccess" value="${attedStartSuccess.atte_start}"/>
+		<input type="hidden" id="attedStartSuccess" value="${attedStartSuccess}"/>
 	</c:if>
 	
 	<!-- 퇴근 체크할 때 당일 출석 체크를 하지 않았음을 표시 -->
@@ -28,7 +28,7 @@
 	
 	<!-- 퇴근 체크 완료되었음을 표시 -->
 	<c:if test="${not empty endSuccess}">
-		<input type="hidden" id="endSuccess" value="${endSuccess.atte_end}"/>
+		<input type="hidden" id="endSuccess" value="${endSuccess}"/>
 	</c:if>
 	
 	<!-- 출근체크를 한 상태에서 출근체크버튼을 눌렀을 때 보여줄 직원 이름 -->
@@ -40,29 +40,27 @@
 	<c:if test="${not empty endContains}">
 		<input type="hidden" id="endContains" value="${endContains}"/>
 	</c:if>
+	<div class="emp_dashboard">
 	<div class="emp_top_box">
-		<form action="/atted/atteStart" method="post">
-			<div class="emp_main_box">
-				<input type="hidden" name="currentDate"/>
-				<input type="hidden" name="atte_start"/>
-				<input type="hidden" name="employee_id" value="${employee.employee_id}"/>
-				<label class="em_label">출석 체크</label>
-				<input class="em_sm_btn" type="submit" id="atte_startBTN" value="출석"/>
-			</div>
-		</form>
-		<form action="/atted/atteEnd" method="post">
-			<div class="emp_main_box">
-				<input type="hidden" name="currentDate"/>
-				<input type="hidden" name="atte_end"/>
-				<input type="hidden" name="employee_id" value="${employee.employee_id}"/>
-				<label class="em_label">퇴근 체크</label>
-				<input class="em_sm_btn" type="submit" id="atte_endBTN" value="퇴근"/>
-			</div>
-		</form>
+		<div class="emp_main_box">
+			<label class="em_label">당일 출석 시간</label>
+			<label class="em_label">${work_start}</label>
+		</div>
+		<div class="emp_main_box">
+			<input type="hidden" id="nowYear"/>
+			<label class="em_label">총 근무 일수</label>
+			<label class="em_label">${allWork} 일</label>
+		</div>
 		<div class="emp_main_box">
 			<label class="em_label">남은 연차</label>
-			<!-- 연차 계산 변수 들어올 자리 -->
+			<label class="em_label">${leave}</label>
 		</div>
+		<c:if test="${not empty valueManager}">
+			<div class="emp_main_box">
+				<label class="em_label">관리자 페이지</label>
+				<a href="/manage/mngindex">이동</a>
+			</div>
+		</c:if>
 	</div>
 	<div class="emp_info_box">
 		<div class="emp_info_menu">
@@ -91,6 +89,20 @@
 				<div class="info_item">
 					<label>주소</label><label id="address">${employee.address}</label>
 				</div>
+				<div class="info_item">
+					<form action="/atted/atteStart" method="post">
+						<input type="hidden" name="currentDate"/>
+						<input type="hidden" name="atte_start"/>
+						<input type="hidden" name="employee_id" value="${employee.employee_id}"/>
+						<input class="em_sm_btn" type="submit" id="atte_startBTN" value="출석"/>
+					</form>
+					<form action="/atted/atteEnd" method="post">
+						<input type="hidden" name="currentDate"/>
+						<input type="hidden" name="atte_end"/>
+						<input type="hidden" name="employee_id" value="${employee.employee_id}"/>
+						<input class="em_sm_btn" type="submit" id="atte_endBTN" value="퇴근"/>
+					</form>
+				</div>
 			</c:if>
 		</div>
 		<div class="emp_info_menu">
@@ -99,6 +111,7 @@
 		<div class="emp_info_menu">
 			자신의 출/퇴근 기록
 		</div>
+	</div>
 	</div>
 </main>
 <script src="/js/atted.js"></script>

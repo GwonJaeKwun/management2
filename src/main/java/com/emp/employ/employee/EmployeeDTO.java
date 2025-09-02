@@ -1,5 +1,9 @@
 package com.emp.employ.employee;
 
+import java.time.LocalTime;
+
+import com.emp.employ.atted.AttedDTO;
+
 public class EmployeeDTO {
 	
 	/*
@@ -45,11 +49,78 @@ public class EmployeeDTO {
 	private String email;
 	private String address;
 	private String employment_date;
+	private String exit_date;
+	
+	private String leave_start_date;
+	private String leave_end_date;
 	
 	private int emp_flag;
 	private int address_id;
 	
+	/* 출근 중복 체크 */
+	private boolean startContains = false;
+	
+	/* 퇴근 중복 체크 */
+	private boolean endContains = false;
+	
+	/* 퇴근체크전 출석체크 여부 */
+	private boolean startNot = false;
+	
+	/* 퇴근 체크 */
+	private LocalTime endSuccess;
+
+	/* 출근 체크 */
+	private LocalTime attedStartSuccess;
+	
 	public EmployeeDTO() {}
+	
+	public String getExit_date() {
+		return exit_date;
+	}
+	
+	public void setExit_date(String exit_date) {
+		this.exit_date = exit_date;
+	}
+	
+	public LocalTime getEndSuccess() {
+		return endSuccess;
+	}
+	
+	public void setEndSuccess(LocalTime endSuccess) {
+		this.endSuccess = endSuccess;
+	}
+	
+	public LocalTime getAttedStartSuccess() {
+		return attedStartSuccess;
+	}
+	
+	public void setAttedStartSuccess(LocalTime attedStartSuccess) {
+		this.attedStartSuccess = attedStartSuccess;
+	}
+
+	public boolean isStartNot() {
+		return startNot;
+	}
+
+	public void setStartNot(boolean startNot) {
+		this.startNot = startNot;
+	}
+
+	public boolean isStartContains() {
+		return startContains;
+	}
+	
+	public void setStartContains(boolean startContains) {
+		this.startContains = startContains;
+	}
+	
+	public boolean isEndContains() {
+		return endContains;
+	}
+	
+	public void setEndContains(boolean endContains) {
+		this.endContains = endContains;
+	}
 	
 	/* Setter 영역 */
 	public void setEmployee_id(String employee_id) {
@@ -195,6 +266,26 @@ public class EmployeeDTO {
 	
 	public String getManager_name() {
 		return manager_name;
+	}
+
+	public String getLeave_start_date() {
+		return leave_start_date;
+	}
+
+	public void setLeave_start_date(String leave_start_date) {
+		this.leave_start_date = leave_start_date;
+	}
+
+	public String getLeave_end_date() {
+		return leave_end_date;
+	}
+
+	public void setLeave_end_date(String leave_end_date) {
+		this.leave_end_date = leave_end_date;
+	}
+
+	public void setAddress_id(int address_id) {
+		this.address_id = address_id;
 	}
 	
 }

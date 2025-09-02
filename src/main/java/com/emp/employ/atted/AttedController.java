@@ -1,12 +1,17 @@
 package com.emp.employ.atted;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.emp.employ.employee.EmployeeDTO;
+import com.emp.util.Paging;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -56,21 +61,20 @@ public class AttedController {
 		
 		/* 당일 출석체크를 했었으면 실행 */
 		if(contains != null) {
-			
 			/* 관리자인 경우 관리자 페이지로 */
 			if(manager) {
-				mav.addObject("startContains", employee.getName());
-				mav.setViewName("manager/manager");
+				employee.setStartContains(true);
+				session.setAttribute("manager", employee);
+				mav.setViewName("redirect:/manage/mngindex");
 				return mav;
 			}
 			
 			/* 직원인 경우 직원 페이지로 */
-			mav.addObject("startContains", employee.getName());
-			mav.setViewName("emp/empDash");
+			employee.setStartContains(true);
+			session.setAttribute("employee", employee);
+			mav.setViewName("redirect:/emp/empView");
 			return mav;
 		}
-		
-		
 		
 		AttedDTO target = atted;
 		attedService.atteStartFlag(target);
@@ -78,15 +82,15 @@ public class AttedController {
 		
 		/* 출석체크한 사람이 관리자라면 관리자 페이지로 이동 */
 		if(manager) {
-			mav.addObject("attedStartSuccess", target);
-			mav.addObject("manager", employee);
+			employee.setAttedStartSuccess(target.getAtte_start());
+			session.setAttribute("manager", employee);
+			mav.setViewName("redirect:/manage/mngindex");
 			return mav;
 		}
 		
-		
-		mav.addObject("attedStartSuccess", target);
-		mav.addObject("employee", employee);
-		mav.setViewName("emp/empDash");
+		employee.setAttedStartSuccess(target.getAtte_start());
+		session.setAttribute("employee", employee);
+		mav.setViewName("redirect:/emp/empView");
 		return mav;
 	}
 
@@ -102,7 +106,6 @@ public class AttedController {
 		
 		EmployeeDTO employee = (EmployeeDTO) session.getAttribute("employee");
 		
-		/* 로그인한 사람이 아니라면 [인터셉터에서 걸어둬서 없어도 되는 로직이지만 설명을 위해] */
 		if(employee == null) {
 			session.invalidate();
 			mav.setViewName("redirect:/");
@@ -116,13 +119,13 @@ public class AttedController {
 		int stop = attedMapper.atteEndStop(atted);
 		if(stop > 0) {
 			if(manager) {
-				mav.addObject("endContains", employee.getName());
-				mav.setViewName("manager/manager");
+				employee.setEndContains(true);
+				mav.setViewName("redirect:/manage/mngindex");
 				return mav;
 			}
 			
-			mav.addObject("endContains", employee.getName());
-			mav.setViewName("emp/empDash");
+			employee.setEndContains(true);
+			mav.setViewName("redirect:/emp/empView");
 			return mav;
 		}
 		
@@ -132,13 +135,13 @@ public class AttedController {
 		/* 퇴근체크 버튼을 눌렀는데 당일 출석체크를 하지 않은 경우 */
 		if(atte_start == null) {
 			if(manager) {
-				mav.addObject("startNot", true);
-				mav.setViewName("manager/manager");
+				employee.setStartNot(true);
+				mav.setViewName("redirect:/manage/mngindex");
 				return mav;
 			}
 			
-			mav.addObject("startNot", true);
-			mav.setViewName("emp/empDash");
+			employee.setStartNot(true);
+			mav.setViewName("redirect:/emp/empView");
 			return mav;
 		}
 		
@@ -150,15 +153,62 @@ public class AttedController {
 		attedMapper.atteEndUpdate(target);
 		
 		if(manager) {
-			mav.addObject("endSuccess", target);
-			mav.addObject("manager", employee);
-			mav.setViewName("manager/manager");
+			employee.setEndSuccess(target.getAtte_end());
+			session.setAttribute("manager", employee);
+			mav.setViewName("redirect:/manage/mngindex");
 			return mav;
 		}
 		
-		mav.addObject("endSuccess", target);
-		mav.addObject("employee", employee);
-		mav.setViewName("emp/empDash");
+		employee.setEndSuccess(target.getAtte_end());
+		session.setAttribute("employee", employee);
+		mav.setViewName("redirect:/emp/empView");
+		return mav;
+	}
+	
+	/* 직원 자신의 출/퇴근 기록 페이지 보여주기 */
+	@GetMapping("/empAttedView")
+	public ModelAndView empAttedView(HttpSession session) {
+		ModelAndView mav = new ModelAndView();
+		
+		EmployeeDTO employee = (EmployeeDTO) session.getAttribute("employee");
+		
+		mav.addObject("emp", employee);
+		mav.setViewName("emp/empAttedList");
+		return mav;
+	}
+	
+	/* 직원 자신의 출/퇴근 기록 검색 */
+	@RequestMapping("/empAttedList")
+	public ModelAndView empAttedList(int nowPage ,String start, String end, String sort, Integer search,HttpSession session) {
+		ModelAndView mav = new ModelAndView();
+		
+		if(search == null) {
+			search = 1;
+		}
+		
+		EmployeeDTO employee = (EmployeeDTO) session.getAttribute("employee");
+		
+		List<AttedDTO> getAttedList = attedMapper.getAttedList(start, end, search, employee.getEmployee_id());
+		int totalRecordSize = getAttedList.size();
+		
+		Paging<AttedDTO> paging = new Paging<>(nowPage, 10, totalRecordSize, 5, 1); 
+		
+		int offset = paging.getOffset();
+		int recordSize = paging.getRecordSize();
+		
+		List<AttedDTO> pagingList = attedMapper.getPagingAttedList(start, end, employee.getEmployee_id(), sort, search, offset, recordSize);
+		
+		paging.setList(pagingList);
+		Map<String, Integer> pagingNum = paging.getPagingMap();
+		
+		mav.addObject("sort", sort);
+		mav.addObject("search", search);
+		mav.addObject("emp", employee);
+		mav.addObject("start", start);
+		mav.addObject("end", end);
+		mav.addObject("list", pagingList);
+		mav.addObject("paging", pagingNum);
+		mav.setViewName("emp/empAttedList");
 		return mav;
 	}
 	

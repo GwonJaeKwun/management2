@@ -8,7 +8,7 @@
 	<link rel="stylesheet" href="/css/reset.css"/>
 	<link rel="stylesheet" href="/css/mngHeader.css"/>
 	<link rel="stylesheet" href="/css/manager.css"/>
-	<title>My Company Manager</title>
+	<title>My Company Management</title>
 </head>
 <body>
 <!-- 관리자 메인 페이지 헤더 부분 -->
@@ -18,7 +18,7 @@
 <main>
 	<!-- 출석 체크 완료되었음을 표시 -->
 	<c:if test="${not empty attedStartSuccess}">
-		<input type="hidden" id="attedStartSuccess" value="${attedStartSuccess.atte_start}"/>
+		<input type="hidden" id="attedStartSuccess" value="${attedStartSuccess}"/>
 	</c:if>
 	
 	<!-- 퇴근 체크할 때 당일 출석 체크를 하지 않았음을 표시 -->
@@ -28,7 +28,7 @@
 	
 	<!-- 퇴근 체크 완료되었음을 표시 -->
 	<c:if test="${not empty endSuccess}">
-		<input type="hidden" id="endSuccess" value="${endSuccess.atte_end}"/>
+		<input type="hidden" id="endSuccess" value="${endSuccess}"/>
 	</c:if>
 	
 	<!-- 출근체크를 한 상태에서 출근체크버튼을 눌렀을 때 보여줄 직원 이름 -->
@@ -40,23 +40,22 @@
 	<c:if test="${not empty endContains}">
 		<input type="hidden" id="endContains" value="${endContains}"/>
 	</c:if>
-	
 	<div class="mng_top_box">
 		<div class="mng_top_item">
-			<p>당일 출근 인원</p>
-			<p>24명/26명</p>
+			<p>${manager.department_name} 당일 출근 인원</p>
+			<p>${nowWorkEmpCount}/${allEmpCount} 명<br>${per}%</p>
 		</div>
 		<div class="mng_top_item">
-			<p>휴가자 인원</p>
-			<p>2명/26명</p>
+			<p>${manager.department_name} 부서 휴가자 인원</p>
+			<p>${nowLeaveEmp} 명</p>
 		</div>
 		<div class="mng_top_item">
 			<p>휴가 승인 대기</p>
-			<p>2건</p>
+			<p>${leaveAgreeCount} 건</p>
 		</div>
 		<div class="mng_top_item">
-			<p>초과근무 승인 대기</p>
-			<p>5건</p>
+			<p>직원 페이지</p>
+			<a href="/emp/empView">이동</a>
 		</div>
 	</div>
 	<div class="mng_bottom_box">
@@ -77,7 +76,7 @@
 				<label>입사일</label><label>${manager.employment_date}</label>
 			</div>
 			<div class="mng_bottom_menu">
-				<label>부서 직원수</label><label>부서 직원수</label>
+				<label>부서 직원수</label><label>${allEmpCount} 명</label>
 			</div>
 			<div class="mng_bottom_menu">
 				<form action="/atted/atteStart" method="post">
@@ -95,10 +94,10 @@
 			</div>
 		</div>
 		<div class="mng_bottom_item">
-			여기는 부서 직원 목록
+			부서 공지사항
 		</div>
 		<div class="mng_bottom_item">
-			여기는 당일 출근한 부서 직원 목록
+			회사 공지사항
 		</div>
 	</div>
 </main>

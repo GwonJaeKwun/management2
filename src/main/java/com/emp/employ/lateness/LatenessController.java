@@ -1,14 +1,9 @@
 package com.emp.employ.lateness;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.emp.employ.employee.EmployeeDTO;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 
@@ -52,7 +46,7 @@ public class LatenessController {
 
 	    mav.addObject("employeeDTO", employee);
 	    mav.addObject("LatenessDTOList", latenessList);
-	    mav.setViewName("lateness/eatView");
+	    mav.setViewName("emp/eatView");
 	    return mav;
 	}
 	    
@@ -62,7 +56,7 @@ public class LatenessController {
 	        EmployeeDTO employee = (EmployeeDTO) session.getAttribute("employee");
 	        
 	        mav.addObject("employeeDTO", employee);
-	        mav.setViewName("lateness/createForm");
+	        mav.setViewName("emp/createForm");
 	        return mav;
 	    }
 
@@ -103,10 +97,13 @@ public class LatenessController {
 		
 		return mav;
 	}
-	@RequestMapping("/delete")
-	public String delete(LatenessDTO latenessDTO) {
-	    latenessMapper.deleteLateness(latenessDTO); 
-	    return "redirect:/lateness/eatView"; 
+	@PostMapping("/eatDelete")
+	public String eatDelete(@RequestParam("employee_id") String employee_id, @RequestParam("ness_date") String ness_date) {
+	    LatenessDTO latenessDTO = new LatenessDTO();
+	    latenessDTO.setEmployee_id(employee_id);
+	    latenessDTO.setNess_date(ness_date);
+	    latenessMapper.deleteLateness(latenessDTO);
+	    return "redirect:/lateness/eatView";
 	}
 	/*
 	 * 권재균
@@ -130,7 +127,7 @@ public class LatenessController {
         EmployeeDTO employee = (EmployeeDTO) session.getAttribute("employee");
         
         mav.addObject("employeeDTO", employee);
-        mav.setViewName("lateness/createForm");
+        mav.setViewName("emp/createForm");
         return mav;
     }
     @PostMapping("/eatUpdate")
@@ -167,48 +164,9 @@ public class LatenessController {
         mav.addObject("employeeDTO", employee);
 
         // 수정 페이지를 띄워주는 역할이므로 viewName은 updateForm으로 설정
-        mav.setViewName("lateness/updateForm");
+        mav.setViewName("emp/updateForm");
 
         return mav;
     }
     
-    // 관리자 페이지
-    @GetMapping("/managerEatView")
-    public ModelAndView managerEatView(
-    	@RequestParam(value = "search_text", required = false) String searchText,
-        @RequestParam(value = "status", required = false) Integer status,
-        @RequestParam(value = "atte_flag", required = false) Integer atteFlag
-    ) {
-        ModelAndView mv = new ModelAndView();
-        List<LatenessDTO> latenessList;
-
-        if (searchText != null && !searchText.isEmpty() || status != null || atteFlag != null) {
-            latenessList = latenessMapper.selectLatenessListByManager(searchText, status, atteFlag);
-        } else {
-            latenessList = latenessMapper.selectLatenessListAll();
-        }
-
-        mv.addObject("LatenessDTOList", latenessList);
-        
-        mv.setViewName("lateness/managerEatView");
-
-        return mv;
-    }
-    
-    @GetMapping("/eatDeny")
-    public String denyLateness(@RequestParam("employee_id") String employee_id, @RequestParam("ness_date") String ness_date) {
-
-        latenessMapper.updateLatenessStatus(employee_id, ness_date, 0); 
-        
-        return "redirect:/lateness/managerEatView";
-    }
-
-    @GetMapping("/eatApprove")
-    public String approveLateness(@RequestParam("employee_id") String employee_id, @RequestParam("ness_date") String ness_date) {
-
-        latenessMapper.updateLatenessStatus(employee_id, ness_date, 1);
-        
-        return "redirect:/lateness/managerEatView";
-    }
-	
 }

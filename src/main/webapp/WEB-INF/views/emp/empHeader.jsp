@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <header class="emp_header">
 	<div class="emp_header_item">
-		<a href="#">
+		<a href="/emp/empView">
 			<label class="item-label">Dash Board</label>
 		</a>
 	</div>
@@ -11,22 +11,23 @@
 		</a>
 	</div>
 	<div class="emp_header_item">
-		<a href="">
+		<a href="/leave/leaveView?employee_id=${employee.employee_id}">
 			<label class="item-label">휴가 신청</label>
 		</a>
 	</div>
+	<!-- <a href="/leave/leaveReqHistoryList?employee_id=${employee.employee_id}">휴가신청 기록보기</a> -->
 	<div class="emp_header_item">
-		<a href="#">
-			<label class="item-label">초과근무 신청</label>
+		<a href="/leave/leaveReqHistoryList?employee_id=${employee.employee_id}">
+			<label class="item-label">휴가 조회</label>
 		</a>
 	</div>
 	<div class="emp_header_item">
-		<a href="#">
-			<label class="item-label">근태 관리</label>
+		<a href="/lateness/eatView">
+			<label class="item-label">결근/조퇴</label>
 		</a>
 	</div>
 	<div class="emp_header_item">
-		<a href="#">
+		<a href="/atted/empAttedView">
 			<label class="item-label">출/퇴근 기록</label>
 		</a>
 	</div>

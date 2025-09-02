@@ -10,7 +10,7 @@
 </head>
 <body>
     <h1>결근&조퇴 신청 내역</h1>
-         <form action="/lateness/managerEatView" method="get">
+         <form action="/manage/managerEatView" method="get">
         검색: <input type="text" name="search_text" value="${param.search_text}"><br>
         상태:
         <select name="status">

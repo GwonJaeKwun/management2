@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.emp.manager.employee.ManagerLeaveMapper">
+	
+	<!-- 연차 적립할 직원 검색 -->
+	<select id="annualEmp" resultType="com.emp.employ.employee.EmployeeDTO">
+		SELECT
+			E.employee_id,
+			E.name,
+			D.department_name,
+			NVL(D.manager_name, '미지정') AS manager_name,
+			P.position_name,
+			TO_CHAR(E.employment_date, 'YYYY"년" MM"월" DD"일"') AS employment_date
+		FROM
+			employees E, departments D, positions P
+		WHERE
+			E.department_id = D.department_id AND
+			E.position_id = P.position_id AND
+			E.name = #{name} AND
+			E.emp_flag != 0
+	</select>
+	
+	<!-- 연차 적립 실행 : 이거 건들면 프로젝트 망-->
+	<insert id="annualInsert">
+		INSERT INTO annualleave (employee_id, leave_date, leave_type, leave_count, content, work_month)
+		SELECT
+		    #{employee_id},
+		    #{leave_date},
+		    'SAVE',
+		    CASE
+		        WHEN #{content} LIKE '%기본 연차%' OR #{content} LIKE '%기본연차%' OR #{content} LIKE '%기본%' THEN #{leave_count}
+		        WHEN EXISTS (
+		            SELECT 1
+		            FROM (
+		                SELECT COUNT(*) AS work_days
+		                FROM attendance_record
+		                WHERE employee_id = #{employee_id}
+		                  AND TO_CHAR(currentDate, 'YYYY-MM') = SUBSTR(#{work_month}, 1, 7)
+		                  AND atte_flag = 1
+		            ) a
+		            JOIN (
+		                SELECT COUNT(*) AS total_work_days
+		                FROM (
+		                    SELECT TRUNC(TO_DATE(#{work_month}, 'YYYY-MM-DD'), 'MM') + LEVEL - 1 AS DT
+		                    FROM DUAL
+		                    CONNECT BY LEVEL <![CDATA[<=]]> TO_NUMBER(TO_CHAR(LAST_DAY(TO_DATE(#{work_month}, 'YYYY-MM-DD')), 'DD'))
+		                )
+		                WHERE TO_CHAR(DT, 'DY', 'NLS_DATE_LANGUAGE=KOREAN') NOT IN ('토', '일')
+		            ) b ON a.work_days = b.total_work_days
+		        )
+		            THEN #{leave_count}
+		        ELSE 0
+		    END AS leave_count,
+		    #{content} AS content,
+		    CASE
+		        WHEN #{content} LIKE '%만근%' THEN TO_DATE(#{work_month}, 'YYYY-MM-DD')
+		        ELSE NULL
+		    END AS work_month
+		FROM DUAL
+	</insert>
+	
+	<!-- 연차적립 대상의 정보 불러오기 -->
+	<select id="leaveTarget" resultType="com.emp.employ.employee.EmployeeDTO">
+		SELECT * FROM
+			employees
+		WHERE
+			employee_id = #{employee_id} AND
+			emp_flag != 0
+	</select>
+	
+	<!-- 연차 적립 내역 조회 search, sort, sortType -->
+	<select id="getLeaveSortList" resultType="com.emp.employ.leave.LeaveEmpDTO">
+		SELECT
+			A.leave_id,
+			E.name AS name,
+			D.department_name AS department_name,
+   			TO_CHAR(A.leave_date, 'YYYY-MM-DD') AS leave_date,
+   			A.leave_count,
+   			CASE
+   				WHEN A.content LIKE '%기본%' THEN '기본 연차'
+   				WHEN A.content LIKE '%만근%' THEN '만근 연차'
+   				ELSE '특별 연차'
+   			END AS content
+		FROM
+			employees E, departments D, annualleave A, worktypes W, positions P
+		WHERE
+			E.position_id = P.position_id AND
+			E.worktype_id = W.worktype_id AND
+			E.department_id = D.department_id AND
+			E.employee_id   = A.employee_id AND
+			E.emp_flag != 0
+			<if test="search != null and (search.contains('기본') or search.contains('만근') or search.contains('특별'))">
+				AND A.content LIKE '%${search}%'
+			</if>
+			<if test="search != null and not (search.contains('기본') or search.contains('만근') or search.contains('특별'))">
+				AND ( E.name LIKE '%${search}%'            OR
+				      D.department_name LIKE '%${search}%' OR
+				      W.worktype LIKE '%${search}%'        OR
+				      P.position_name LIKE '%${search}%')
+			</if>
+			<if test="sort == 'ASC' and sortType != null">
+				ORDER BY ${sortType} ASC
+			</if>
+			<if test="sort == 'DESC' and sortType != null">
+				ORDER BY ${sortType} DESC
+			</if>
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+

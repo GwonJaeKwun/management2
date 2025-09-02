@@ -20,7 +20,7 @@ main {
 	
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: center;
 	
 	align-items: center;
 	
@@ -28,9 +28,11 @@ main {
 }
 
 .mng_top_item {
-	width: 15%;
+	width: 20%;
 	height: 80%;
 	padding: 5px;
+	margin-right: 100px;
+	
 	
 	background-color: #2C3E50;
 	border: none;
@@ -44,7 +46,7 @@ main {
 	flex-direction: column;
 	
 	text-align: center;
-	font-size: 25px;
+	font-size: 20px;
 	font-weight: 600;
 	
 	color: white;
@@ -56,18 +58,55 @@ main {
 	}
 	
 	p:last-child {
+		margin-top: 20px;
 		font-size: 30px;
 		text-shadow:
 			0 0 1px #000,
 			0 0 3px #FFF;
 	}
+	
+	a {
+		text-decoration: none;
+		margin: 0 auto;
+		margin-top: 20px;
+		line-height: 50px;
+		border-radius: 15px;
+		width: 50%;
+		font-size: 25px;
+		
+		color: white;
+		text-shadow: 0 0 1.5px #FFF;
+		border: 1px solid white;
+		font-weight: 900;
+		letter-spacing: 2px;
+		
+		background-image: linear-gradient(315deg,
+			#2C3E50, #2C3E50, #2C3E50, #2C3E50, #2C3E50,
+			#D5D5D5,
+			#2C3E50, #2C3E50, #2C3E50, #2C3E50, #2C3E50);
+		background-position: 100% 100;
+		transition: background-position 0.5s ease;
+		
+		background-size: 200% 100%;
+		&:hover {
+			background-position: 100% 0;
+		}
+	}
+}
+
+.mng_top_item:first-child p:last-child {
+	margin-top: 0px;
+}
+
+.mng_top_item:last-child {
+	margin-right: 0px;
 }
 
 /* 관리자 메인 페이지 본문 부분 */
 .mng_bottom_box {
 	width: 90%;
 	min-width: 1450px;
-	height: 85%;
+	height: 60%;
 	
 	margin: 0 auto;
 	margin-top: 30px;
@@ -94,6 +133,8 @@ main {
 	
 	display: flex;
 	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 	padding: 10px;
 }
 
@@ -111,7 +152,7 @@ main {
 	flex-direction: row;
 	
 	align-items: center;
-	border-radius: 20px;
+	border-radius: 10px;
 	
 	label {
 		line-height: 90%;
@@ -156,6 +197,20 @@ main {
 		background-image: linear-gradient(150deg, #81ecec, #6c5ce7);
 		text-shadow: 0 0 3px #FFF;
 	}
+}
+
+.mng_bottom_menu select {
+	width: 150px;
+	height: 30px;
+	margin-left: 20px;
+	padding-left: 5px;
+	outline: none;
+	border: none;
+	
+	border-radius: 10px;
+	box-shadow: 0 0 3px #000;
+	
+	font-size: 16px;
 }
 
 

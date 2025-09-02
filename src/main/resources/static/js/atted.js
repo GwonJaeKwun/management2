@@ -1,3 +1,33 @@
+// atte_start에 값 넣기
+function updateAtte() {
+	const now = new Date(); 
+	
+	// 년 월 일
+	const year = now.getFullYear();
+	const month = String(now.getMonth() + 1).padStart(2, '0');
+	const day = String(now.getDate()).padStart(2, '0');
+	
+	// 시간:분:초
+	const hours = String(now.getHours()).padStart(2, '0');
+	const minutes = String(now.getMinutes()).padStart(2, '0');
+	const seconds = String(now.getSeconds()).padStart(2, '0');
+	
+	const atte_startEl = document.querySelector('[name=atte_start]');
+		  atte_startEl.value = `${hours}:${minutes}`;
+		  
+	const atte_endEl = document.querySelector('[name=atte_end]');
+	      atte_endEl.value = `${hours}:${minutes}`;
+	
+	const currentDateEl = document.querySelectorAll('[name=currentDate]');
+	currentDateEl.forEach( e => {
+		e.value = `${year}-${month}-${day}`;
+	});
+}
+updateAtte();
+
+setInterval('updateAtte', 10000);
+
+
 // 출석 체크 후 시간 알려주기
 const attedStartSuccessEl = document.querySelector('[id=attedStartSuccess]');
 
@@ -50,7 +80,7 @@ atte_startBTNEl.addEventListener('click', function(e) {
 	
 	/* 출석 체크 버튼을 누르는 시간이 17시 이후인 경우 출석체크 막는 로직 */
 	if(hours > 17) {
-		alert(`${hours}:${minutes} ` + '현재는 출근시간이 아닙니다. 까마득히 지났어요. 왜 이제야 오셨나요?');
+		alert(`${hours}:${minutes} ` + '현재는 출근시간이 아닙니다.');
 		e.preventDefault();
 		return false;
 	}
@@ -63,7 +93,6 @@ atte_startBTNEl.addEventListener('click', function(e) {
 	}
 	
 });
-
 
 // 퇴근 체크 눌렀을 때 당일 출석하지 않았다면 보여줄 경고창
 const startNotEl = document.querySelector('[id=startNot]');

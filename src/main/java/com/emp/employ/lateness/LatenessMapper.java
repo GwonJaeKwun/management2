@@ -52,6 +52,24 @@ public interface LatenessMapper {
             @Param("status") Integer status,
             @Param("atte_flag") Integer atteFlag
         );
-		
+
+
+
+    LatenessDTO searchLatenessDetail(
+    		@Param("employee_id") String employeeId, 
+    		@Param("ness_date") String nessDate);
+    
+	Integer selectAttendanceCount(
+			@Param("employee_id") String employeeId, 
+			@Param("ness_date") String nessDate);
+	
+	void insertAttendanceRecord(
+			@Param("employee_id") String employeeId, 
+			@Param("ness_date") String nessDate, 
+			@Param("atte_flag") int atteFlag);
+	void updateAttendanceRecord(
+			@Param("employee_id") String employeeId,
+			@Param("ness_date") String nessDate, 
+			@Param("atte_flag") int atteFlag);
 
 }
